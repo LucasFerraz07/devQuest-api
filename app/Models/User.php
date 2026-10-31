@@ -2,42 +2,40 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Models\Company;
-use App\Models\Concerns\Tenantable;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
 {
-    use HasFactory, Notifiable, HasRoles, Tenantable, HasUuids;
-
-    protected $guard_name = 'api';
+    use HasFactory, HasUuids, Notifiable, SoftDeletes;
 
     protected $fillable = [
         'name',
         'email',
         'password',
-        'company_id',
-        'ativo',
-        'last_login',
+        'total_xp',
+        'current_level',
+        'role',
     ];
 
     protected $hidden = [
         'password',
+        'remember_token',
     ];
 
     protected function casts(): array
     {
         return [
+            'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'ativo'      => 'boolean',
-            'last_login' => 'datetime',
+            'total_xp' => 'integer',
+            'current_level' => 'integer',
         ];
     }
 
@@ -51,13 +49,31 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
-    public function company(): BelongsTo
+    public function createdLearningPaths(): HasMany
     {
-        return $this->belongsTo(Company::class);
+        return $this->hasMany(LearningPath::class, 'created_by');
     }
 
-    public function vitalabs(): HasMany
+    public function stageProgress(): HasMany
     {
-        return $this->hasMany(Vitalab::class);
+        return $this->hasMany(UserStageProgress::class);
+    }
+
+    public function exerciseSubmissions(): HasMany
+    {
+        return $this->hasMany(ExerciseSubmission::class);
+    }
+
+    public function userAchievements(): HasMany
+    {
+        return $this->hasMany(UserAchievement::class);
+    }
+
+    public function achievements(): BelongsToMany
+    {
+        return $this->belongsToMany(Achievement::class, 'user_achievements')
+            ->using(UserAchievement::class)
+            ->withPivot(['id', 'earned_at'])
+            ->withTimestamps();
     }
 }

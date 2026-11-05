@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class LearningPath extends Model
 {
@@ -36,5 +37,10 @@ class LearningPath extends Model
     public function stages(): HasMany
     {
         return $this->hasMany(Stage::class)->orderBy('position');
+    }
+
+    public function stageProgress(): HasManyThrough
+    {
+        return $this->hasManyThrough(UserStageProgress::class, Stage::class);
     }
 }

@@ -8,9 +8,6 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        $this->call([
-            RoleSeeder::class,
-            DefaultAdminSeeder::class,
-        ]);
+        $this->call([DefaultAdminSeeder::class, AchievementSeeder::class]);
     }
 }

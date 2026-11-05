@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\StageStatus;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -25,6 +26,7 @@ class UserStageProgress extends Model
     protected function casts(): array
     {
         return [
+            'status' => StageStatus::class,
             'best_score' => 'integer',
             'started_at' => 'datetime',
             'completed_at' => 'datetime',

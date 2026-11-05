@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\SubmissionStatus;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -26,6 +27,7 @@ class ExerciseSubmission extends Model
     protected function casts(): array
     {
         return [
+            'status' => SubmissionStatus::class,
             'score_awarded' => 'integer',
             'submitted_at' => 'datetime',
         ];

@@ -13,7 +13,7 @@ return new class extends Migration
             $table->foreignUuid('stage_id')->constrained()->cascadeOnDelete();
             $table->string('title');
             $table->longText('statement');
-            $table->string('type', ['multiple_choice', 'code']);
+            $table->enum('type', ['multiple_choice', 'code']);
             $table->enum('difficulty', ['easy', 'medium', 'hard'])->default('easy');
             $table->string('programming_language')->nullable();
             $table->longText('starter_code')->nullable();

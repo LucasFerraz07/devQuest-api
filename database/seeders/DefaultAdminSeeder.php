@@ -10,16 +10,10 @@ class DefaultAdminSeeder extends Seeder
 {
     public function run(): void
     {
-        $admin = User::firstOrCreate(
-            ['email' => env('ADMIN_EMAIL', 'admin@teste.com')],
-            [
-                'name'      => 'System Admin',
-                'password'  => bcrypt(env('ADMIN_PASSWORD', 'password')),
-                'company_id' => null,
-                'ativo'     => true,
-            ]
-        );
-
-        $admin->assignRole(UserType::SYSTEM_ADMIN->value);
+        User::firstOrCreate(['email' => env('ADMIN_EMAIL', 'admin@teste.com')], [
+            'name' => 'DevQuest Admin',
+            'password' => env('ADMIN_PASSWORD', 'password'),
+            'role' => UserType::ADMIN,
+        ]);
     }
 }

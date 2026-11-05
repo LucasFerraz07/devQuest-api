@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\UserType;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -32,6 +33,7 @@ class User extends Authenticatable implements JWTSubject
     protected function casts(): array
     {
         return [
+            'role' => UserType::class,
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'total_xp' => 'integer',
@@ -75,5 +77,10 @@ class User extends Authenticatable implements JWTSubject
             ->using(UserAchievement::class)
             ->withPivot(['id', 'earned_at'])
             ->withTimestamps();
+    }
+
+    public function lessonProgress(): HasMany
+    {
+        return $this->hasMany(UserLessonProgress::class);
     }
 }

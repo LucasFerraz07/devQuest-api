@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\Difficulty;
+use App\Enums\ExerciseType;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -29,6 +31,8 @@ class Exercise extends Model
     protected function casts(): array
     {
         return [
+            'type' => ExerciseType::class,
+            'difficulty' => Difficulty::class,
             'points' => 'integer',
             'position' => 'integer',
             'is_published' => 'boolean',

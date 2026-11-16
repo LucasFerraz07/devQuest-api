@@ -16,9 +16,13 @@ class SubmitExerciseRequest extends FormRequest
     {
         return [
             'selected_option_id' => ['required', 'uuid', Rule::exists('exercise_options', 'id')->where('exercise_id', $this->route('exercise')->id)],
+            /** @ignoreParam */
             'user_id' => ['prohibited'],
+            /** @ignoreParam */
             'status' => ['prohibited'],
+            /** @ignoreParam */
             'score_awarded' => ['prohibited'],
+            /** @ignoreParam */
             'submitted_code' => ['prohibited'],
         ];
     }

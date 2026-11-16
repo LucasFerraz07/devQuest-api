@@ -46,6 +46,14 @@ A base é `/api`. Envie `Accept: application/json`, `Content-Type: application/j
 - [OpenAPI 3.1](docs/openapi.json): contratos completos de entrada e saída, filtros e respostas.
 - [Integração com React](docs/react-integration.md): fluxo demonstrativo e consumo dos resultados.
 
+A documentação é gerada pelo **Scramble**, com grupos e descrições nos controllers. Em ambiente `local`, acesse `/docs/api` para a interface ou `/docs/api.json` para o contrato JSON. Para atualizar o arquivo versionado, use um banco com as migrations aplicadas e execute:
+
+```bash
+php artisan scramble:export --fail-on-unknown
+```
+
+Os controllers capturam `ApiException` lançadas pelos services e retornam a mensagem, os dados e o código HTTP usando `ReturnApi::error`. Regras de negócio devem lançar essa exceção; validações por campo continuam usando `ValidationException` para preservar `errors` e o status 422. O handler global trata erros de middleware, autorização, recursos ausentes e falhas inesperadas, com resposta genérica 500 sem expor detalhes internos. A integração do Scramble em `app/Documentation` documenta esse envelope e as regras das requisições administrativas por tipo de conteúdo.
+
 Sucesso: `{ "error": false, "message": "", "data": ... }`. Listagens acrescentam `meta` no mesmo nível de `data`, com `current_page`, `per_page`, `total` e `last_page`. `per_page` aceita de 1 a 100. O catálogo usa 12 itens por padrão; administração e históricos usam 20.
 
 Erros: `{ "error": true, "message": "...", "data": null }`. Validação retorna 422 e acrescenta `errors`, com mensagens agrupadas por campo. A API também padroniza 401, 403, 404, 409, 429 e 500.

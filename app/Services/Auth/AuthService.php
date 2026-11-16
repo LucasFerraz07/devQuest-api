@@ -6,6 +6,7 @@ use App\Enums\UserType;
 use App\Exceptions\ApiException;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 class AuthService
 {
@@ -33,6 +34,25 @@ class AuthService
         return ['user' => auth('api')->user(), ...$this->token($token)];
     }
 
+    public function me(): User
+    {
+        $user = auth('api')->user();
+        if (! $user) {
+            throw new ApiException('Autenticação inválida ou expirada.', 401);
+        }
+
+        return $user;
+    }
+
+    public function logout(): void
+    {
+        try {
+            auth('api')->logout();
+        } catch (JWTException $e) {
+            throw new ApiException('Autenticação inválida ou expirada.', 401, previous: $e);
+        }
+    }
+
     public function refresh(string $currentToken): array
     {
         if ($currentToken === '') {
@@ -48,6 +68,8 @@ class AuthService
             }
 
             return $this->token($token);
+        } catch (JWTException $e) {
+            throw new ApiException('Autenticação inválida ou expirada.', 401, previous: $e);
         } finally {
             app('tymon.jwt.manager')->setRefreshFlow(false);
         }

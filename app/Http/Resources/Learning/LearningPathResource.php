@@ -2,9 +2,11 @@
 
 namespace App\Http\Resources\Learning;
 
+use App\Models\LearningPath;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin LearningPath */
 class LearningPathResource extends JsonResource
 {
     public function toArray(Request $request): array

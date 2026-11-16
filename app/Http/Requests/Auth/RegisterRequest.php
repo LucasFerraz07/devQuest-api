@@ -17,9 +17,12 @@ class RegisterRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
-            'password' => ['required', 'confirmed', Password::min(8)],
+            'password' => ['required', 'string', 'confirmed', Password::min(8)],
+            /** @ignoreParam */
             'role' => ['prohibited'],
+            /** @ignoreParam */
             'total_xp' => ['prohibited'],
+            /** @ignoreParam */
             'current_level' => ['prohibited'],
         ];
     }

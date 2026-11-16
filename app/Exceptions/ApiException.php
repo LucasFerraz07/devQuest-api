@@ -4,14 +4,15 @@ namespace App\Exceptions;
 
 use App\Builder\ReturnApi;
 use Illuminate\Http\JsonResponse;
+use Throwable;
 
 class ApiException extends \Exception
 {
     public ?array $data;
 
-    public function __construct(string $message = 'Erro inesperado', int $code = 500, ?array $data = null)
+    public function __construct(string $message = 'Erro inesperado', int $code = 500, ?array $data = null, ?Throwable $previous = null)
     {
-        parent::__construct($message, $code);
+        parent::__construct($message, $code, $previous);
         $this->data = $data;
     }
 

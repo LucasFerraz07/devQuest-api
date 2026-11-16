@@ -2,9 +2,16 @@
 
 namespace App\Http\Resources\Learning;
 
+use App\Models\Lesson;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin Lesson
+ *
+ * @property-read string|null $previous_lesson_id
+ * @property-read string|null $next_lesson_id
+ */
 class LessonResource extends JsonResource
 {
     public function toArray(Request $request): array

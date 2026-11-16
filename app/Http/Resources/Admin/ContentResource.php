@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources\Admin;
 
+use App\Enums\Difficulty;
+use App\Enums\ExerciseType;
 use App\Models\Exercise;
 use App\Models\LearningPath;
 use App\Models\Lesson;
@@ -11,6 +13,34 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class ContentResource extends JsonResource
 {
+    /**
+     * @return array{
+     *     id: string,
+     *     title: string,
+     *     is_published: bool,
+     *     created_at: string,
+     *     updated_at: string,
+     *     slug?: string,
+     *     description?: string|null,
+     *     cover_image_url?: string|null,
+     *     created_by?: string,
+     *     learning_path_id?: string,
+     *     stage_id?: string,
+     *     position?: int,
+     *     minimum_score?: int,
+     *     content?: string,
+     *     estimated_minutes?: int|null,
+     *     statement?: string,
+     *     type?: ExerciseType,
+     *     difficulty?: Difficulty,
+     *     programming_language?: string|null,
+     *     starter_code?: string|null,
+     *     explanation?: string|null,
+     *     points?: int,
+     *     options?: list<array{id: string, content: string, is_correct: bool, position: int}>,
+     *     test_cases?: list<array{id: string, input: string, expected_output: string, position: int}>,
+     * }
+     */
     public function toArray(Request $request): array
     {
         $fields = match (true) {

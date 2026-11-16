@@ -19,7 +19,30 @@ class ContentRequest extends FormRequest
     {
         $type = ContentType::from($this->route('content_type'));
         $record = $this->route('record') ? $type->model()::findOrFail($this->route('record')) : null;
-        $required = $record ? 'sometimes' : 'required';
+        $rules = $this->rulesFor($type, $record !== null);
+        if ($type === ContentType::PATH) {
+            $rules['slug'][] = Rule::unique('learning_paths', 'slug')->ignore($record?->id);
+
+            return $rules;
+        }
+
+        $parentField = $type === ContentType::STAGE ? 'learning_path_id' : 'stage_id';
+        $parentTable = $type === ContentType::STAGE ? 'learning_paths' : 'stages';
+        $parentId = $record?->{$parentField} ?? $this->input($parentField);
+        $rules[$parentField][] = Rule::exists($parentTable, 'id');
+        if ($record) {
+            $rules[$parentField][] = Rule::in([$record->{$parentField}]);
+        }
+        $rules['position'][] = Rule::unique((new ($type->model()))->getTable(), 'position')
+            ->where($parentField, $parentId)->ignore($record?->id);
+
+        return $rules;
+    }
+
+    /** Rules shared by HTTP validation and Scramble, without querying an existing record. */
+    public function rulesFor(ContentType $type, bool $updating): array
+    {
+        $required = $updating ? 'sometimes' : 'required';
         $rules = [
             'title' => [$required, 'string', 'max:255'],
             'is_published' => ['sometimes', 'boolean'],
@@ -27,19 +50,14 @@ class ContentRequest extends FormRequest
         ];
         if ($type === ContentType::PATH) {
             return $rules + [
-                'slug' => [$required, 'string', 'max:255', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/', Rule::unique('learning_paths', 'slug')->ignore($record?->id)],
+                'slug' => [$required, 'string', 'max:255', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/'],
                 'description' => ['sometimes', 'nullable', 'string'],
                 'cover_image_url' => ['sometimes', 'nullable', 'url', 'max:255'],
             ];
         }
         $parentField = $type === ContentType::STAGE ? 'learning_path_id' : 'stage_id';
-        $parentTable = $type === ContentType::STAGE ? 'learning_paths' : 'stages';
-        $parentId = $record?->{$parentField} ?? $this->input($parentField);
-        $rules[$parentField] = [$required, 'uuid', Rule::exists($parentTable, 'id')];
-        if ($record) {
-            $rules[$parentField][] = Rule::in([$record->{$parentField}]);
-        }
-        $rules['position'] = [$required, 'integer', 'between:1,1000000', Rule::unique((new ($type->model()))->getTable(), 'position')->where($parentField, $parentId)->ignore($record?->id)];
+        $rules[$parentField] = [$required, 'uuid'];
+        $rules['position'] = [$required, 'integer', 'between:1,1000000'];
         if ($type === ContentType::STAGE) {
             return $rules + [
                 'description' => ['sometimes', 'nullable', 'string'],

@@ -8,6 +8,16 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class DashboardResource extends JsonResource
 {
+    /**
+     * @return array{
+     *     user: UserResource,
+     *     started_paths_count: int,
+     *     completed_stages_count: int,
+     *     achievements_count: int,
+     *     learning_paths: list<LearningPathResource>,
+     *     next_activity: array{learning_path_id: string, stage_id: string, lesson_id: string|null, exercise_id: string|null}|null,
+     * }
+     */
     public function toArray(Request $request): array
     {
         return [

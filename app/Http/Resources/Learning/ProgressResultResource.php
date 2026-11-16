@@ -8,6 +8,17 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class ProgressResultResource extends JsonResource
 {
+    /**
+     * @return array{
+     *     user: UserResource,
+     *     stage: StageResource,
+     *     new_achievements: list<AchievementResource>,
+     *     next_stage_id: string|null,
+     *     submission?: SubmissionResource,
+     *     explanation?: string,
+     *     lesson?: LessonResource,
+     * }
+     */
     public function toArray(Request $request): array
     {
         $result = [

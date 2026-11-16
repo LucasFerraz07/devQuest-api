@@ -2,9 +2,11 @@
 
 namespace App\Http\Resources\Learning;
 
+use App\Models\Stage;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin Stage */
 class StageResource extends JsonResource
 {
     public function toArray(Request $request): array
